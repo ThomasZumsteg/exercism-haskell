@@ -10,8 +10,11 @@ responseFor what
   | otherwise = "Whatever."
 
   where
-    shouting w = filter isUpper w /= [] && not(any isLower w)
     nothing w = all isSpace w
     question w
       | isSpace $ last w = question $ init w
       | otherwise = last w == '?'
+    shouting w = hasUppercase w && not(hasLowercase w)
+      where
+        hasUppercase = not . null . filter isUpper
+        hasLowercase = any isLower
