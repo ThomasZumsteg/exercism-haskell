@@ -9,15 +9,16 @@ data Planet = Earth
   | Uranus 
   | Neptune
 
-earth_seconds :: Float
-earth_seconds = 31557600
-
 ageOn :: Planet -> Float -> Float
-ageOn Earth s = s / earth_seconds
-ageOn Mercury s = s / (0.2408467 * earth_seconds)
-ageOn Venus s = s / (0.61519726 * earth_seconds)
-ageOn Mars s = s / (1.8808158 * earth_seconds)
-ageOn Jupiter s = s / (11.862615 * earth_seconds)
-ageOn Saturn s = s / (29.447498 * earth_seconds)
-ageOn Uranus s = s / (84.016846 * earth_seconds)
-ageOn Neptune s = s / (164.79132 * earth_seconds)
+ageOn planet s = s / (earth_seconds * 
+  case planet of
+    Earth -> 1.0
+    Mercury -> 0.2408467
+    Venus -> 0.61519726
+    Mars -> 1.8808158
+    Jupiter -> 11.862615
+    Saturn -> 29.447498
+    Uranus -> 84.016846
+    Neptune -> 164.79132
+  )
+  where earth_seconds = 31557600::Float
