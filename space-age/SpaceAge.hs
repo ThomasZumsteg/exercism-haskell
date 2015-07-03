@@ -21,4 +21,4 @@ ageOn planet s = s / (earth_seconds *
     Uranus -> 84.016846
     Neptune -> 164.79132
   )
-  where earth_seconds = 31557600::Float
+  where earth_seconds = 31557600
