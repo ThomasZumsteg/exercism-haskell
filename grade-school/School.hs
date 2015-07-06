@@ -1,18 +1,20 @@
-module School (School, empty, grade, add, sorted) where
-import qualified Data.Map as Map
-import qualified Data.Set as Set
+module School (School, sorted, add, empty, grade) where
 
-newtype School = School { newSchool :: Map.Map Int (Set.Set String) }
+import qualified Data.Map as Map
+import Data.List (sort)
+
+type School = Map.Map Int [String]
 
 empty :: School
-empty = School Map.empty
+empty = Map.empty
 
-sorted :: School -> [(Int, [String])]
-sorted = map (\(g, s) -> (g, Set.toAscList s)) . Map.toAscList . newSchool
-
-grade :: Int -> School -> [String]
-grade g = Set.toAscList . Map.findWithDefault Set.empty g . newSchool
+sorted :: School ->  [(Int, [String])]
+sorted = sort . Map.toList . Map.map sort
 
 add :: Int -> String -> School -> School
-add g s =
-  School . Map.insertWith Set.union g (Set.singleton s) . newSchool
+add g s = Map.insertWith (++) g [s]
+
+grade :: Int -> School -> [String]
+grade g school = case Map.lookup g school of
+  Just n -> n
+  Nothing -> []
