@@ -18,8 +18,5 @@ prettyPrint :: String -> String
 prettyPrint num = printf "(%s) %s-%s" area prefix postfix
   where
     digits = number num
-    slice m n = take n . drop m
-    area = areaCode digits
-    prefix = slice 3 3 digits
-    postfix = slice 6 4 digits
-
+    (area, local) = splitAt 3 digits
+    (prefix, postfix) = splitAt 3 local
