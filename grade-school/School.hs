@@ -3,18 +3,16 @@ module School (School, sorted, add, empty, grade) where
 import qualified Data.Map as Map
 import Data.List (sort)
 
-type School = Map.Map Int [String]
+data School = School { getSchool :: Map.Map Int [String] }
 
 empty :: School
-empty = Map.empty
+empty = School Map.empty
 
 sorted :: School ->  [(Int, [String])]
-sorted = sort . Map.toList . Map.map sort
+sorted = sort . Map.toList . Map.map sort . getSchool
 
 add :: Int -> String -> School -> School
-add g s = Map.insertWith (++) g [s]
+add g s = School . Map.insertWith (++) g [s] . getSchool
 
 grade :: Int -> School -> [String]
-grade g school = case Map.lookup g school of
-  Just n -> n
-  Nothing -> []
+grade g = Map.findWithDefault [] g . getSchool
