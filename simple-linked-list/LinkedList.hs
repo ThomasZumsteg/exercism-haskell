@@ -20,8 +20,7 @@ toList Nil = []
 toList (Link { datum = d, next = n }) =  d:toList n
 
 fromList :: [a] -> Link a
-fromList [] = Nil
-fromList (x:xs) = new x $ fromList xs
+fromList link = foldr new Nil link
 
 reverseLinkedList :: Link a -> Link a
 reverseLinkedList = fromList . reverse . toList 
