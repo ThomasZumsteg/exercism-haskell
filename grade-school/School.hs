@@ -9,7 +9,7 @@ empty :: School
 empty = School Map.empty
 
 sorted :: School ->  [(Int, [String])]
-sorted = sort . Map.toList . Map.map sort . getSchool
+sorted = Map.toAscList . Map.map sort . getSchool
 
 add :: Int -> String -> School -> School
 add g s = School . Map.insertWith (++) g [s] . getSchool
