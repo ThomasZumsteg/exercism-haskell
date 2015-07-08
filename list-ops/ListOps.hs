@@ -27,10 +27,10 @@ reverse :: [a] -> [a]
 reverse = foldl' (flip (:)) []
 
 map :: (a -> b) -> [a] -> [b]
-map f = foldr (\x acc -> (f x):acc) []
+map f = foldr (\x acc -> f x:acc) []
 
 filter :: (a -> Bool) -> [a] -> [a]
-filter f = foldr (passes) []
+filter f = foldr passes []
   where passes x acc = if f x then x:acc else acc
 
 (++) :: [a] -> [a] -> [a]
