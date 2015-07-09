@@ -37,4 +37,4 @@ filter f = foldr passes []
 xs ++ ys = foldr (:) ys xs
 
 concat :: [[a]] -> [a]
-concat = foldl' (++) []
+concat = foldr (++) []
