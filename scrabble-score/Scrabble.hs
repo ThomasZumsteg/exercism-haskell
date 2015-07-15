@@ -1,18 +1,19 @@
 module Scrabble (scoreLetter, scoreWord) where
 
 import Data.Char (toUpper)
+import Data.Set (member, fromList)
 
 scoreLetter :: Char -> Int
 scoreLetter l
-  | elem l' "AEIOULNRST" = 1
-  | elem l' "DG"         = 2
-  | elem l' "BCMP"       = 3
-  | elem l' "FHVMWY"     = 4
-  | elem l' "K"          = 5
-  | elem l' "JX"         = 8
-  | elem l' "QZ"         = 10
-  | otherwise            = 0
-  where l' = toUpper l
+  | within "AEIOULNRST" = 1
+  | within "DG"         = 2
+  | within "BCMP"       = 3
+  | within "FHVMWY"     = 4
+  | within "K"          = 5
+  | within "JX"         = 8
+  | within "QZ"         = 10
+  | otherwise           = 0
+  where within = member (toUpper l) . fromList
 
 scoreWord :: String -> Int
 scoreWord = sum . map scoreLetter
