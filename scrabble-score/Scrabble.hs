@@ -1,19 +1,21 @@
 module Scrabble (scoreLetter, scoreWord) where
 
 import Data.Char (toUpper)
-import Data.Set (member, fromList)
+import qualified Data.Map as Map
 
 scoreLetter :: Char -> Int
-scoreLetter l
-  | within "AEIOULNRST" = 1
-  | within "DG"         = 2
-  | within "BCMP"       = 3
-  | within "FHVMWY"     = 4
-  | within "K"          = 5
-  | within "JX"         = 8
-  | within "QZ"         = 10
-  | otherwise           = 0
-  where within = member (toUpper l) . fromList
+scoreLetter l = Map.findWithDefault 0 (toUpper l) letter_scores
+  where
+    letter_scores = Map.fromList $ concatMap func [
+      (1, "AEIOULNRST"),
+      (2, "DG"),
+      (3, "BCMP"),
+      (4, "FHVWY"),
+      (5, "K"),
+      (8, "JX"),
+      (10, "QZ")]
+      where
+        func (score, letters) = map (\l' -> (l', score)) letters
 
 scoreWord :: String -> Int
 scoreWord = sum . map scoreLetter
