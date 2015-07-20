@@ -1,6 +1,6 @@
 module Allergies (Allergen(..), isAllergicTo, allergies) where
 
-import Data.Bits
+import Data.Bits (testBit)
 
 data Allergen = Eggs 
   | Peanuts 
@@ -13,8 +13,7 @@ data Allergen = Eggs
   deriving (Show, Enum, Eq, Bounded)
 
 isAllergicTo :: Allergen -> Int -> Bool
-isAllergicTo a n = 0 /= (n .&. mask)
-  where mask = shift 1 $ fromEnum a
+isAllergicTo a n = testBit n (fromEnum a)
 
 allergies :: Int -> [Allergen]
-allergies n = filter (flip isAllergicTo n) [(minBound::Allergen)..]
+allergies n = filter (flip isAllergicTo n) [minBound..]
