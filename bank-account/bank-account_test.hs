@@ -39,11 +39,11 @@ main = exitProperly $ runTestTT $ TestList
   --, withBank "incrementing and checking balance" $ \acct -> do
   --  checkReturn (Just 0) $ getBalance acct
   --  checkReturn (Just 10) $ incrementBalance acct 10
-  --  checkReturn (Just 10) $ getBalance acct
-  , withBank "incrementing balance from other processes then checking it\
-             \from test process" $ \acct -> do
-    replicateM 20 (incrementProc acct) >>= mapM_ (void . takeMVar)
-    checkReturn (Just 20) (getBalance acct)
+    --checkReturn (Just 10) $ getBalance acct
+  --, withBank "incrementing balance from other processes then checking it\
+  --           \from test process" $ \acct -> do
+  --  replicateM 20 (incrementProc acct) >>= mapM_ (void . takeMVar)
+  --  checkReturn (Just 20) (getBalance acct)
   --, testCase "closed banks hold no balance" $ do
   --  acct <- openAccount
   --  checkReturn (Just 0) (getBalance acct)

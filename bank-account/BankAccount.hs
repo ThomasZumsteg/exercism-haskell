@@ -2,22 +2,21 @@ module BankAccount (BankAccount, openAccount,
   closeAccount, getBalance, incrementBalance) where
 
 import Control.Concurrent
-import Prelude
 
-newtype BankAccount = BankAccount { getVal :: MVar (Maybe Int) }
+newtype BankAccount = BankAccount { accessAccout :: MVar (Maybe Int) }
 
 openAccount :: IO BankAccount
 openAccount = BankAccount <$> newMVar (Just 0)
 
 closeAccount :: BankAccount -> IO ()
-closeAccount = flip putMVar Nothing . getVal
+closeAccount a = a >>= swapMVar (accessAccout a) Nothing
 
 getBalance :: BankAccount -> IO (Maybe Int)
-getBalance =  takeMVar . getVal
+getBalance = readMVar . accessAccout
 
 incrementBalance :: BankAccount -> Int -> IO (Maybe Int)
-incrementBalance acct amount = do
-  let b = getVal acct
-  bal <- fmap (amount +) <$> takeMVar b
-  putMVar b bal
-  return bal
+incrementBalance acct delta = do
+  let b = accessAccout acct
+  newBal <- fmap (delta +) <$> takeMVar b
+  putMVar b newBal
+  return newBal
