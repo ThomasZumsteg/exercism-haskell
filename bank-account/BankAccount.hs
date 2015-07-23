@@ -6,17 +6,26 @@ import Control.Concurrent
 newtype BankAccount = BankAccount { accessAccout :: MVar (Maybe Int) }
 
 openAccount :: IO BankAccount
-openAccount = BankAccount <$> newMVar (Just 0)
+openAccount = do
+  v <- newMVar (Just 0)
+  let b = BankAccount v
+  return b
 
 closeAccount :: BankAccount -> IO ()
-closeAccount a = a >>= swapMVar (accessAccout a) Nothing
+closeAccount acct = do
+  let a = accessAccout acct
+  _ <- swapMVar a Nothing
+  return ()
 
 getBalance :: BankAccount -> IO (Maybe Int)
-getBalance = readMVar . accessAccout
+getBalance acct = do
+  let a = accessAccout acct
+  readMVar a
 
 incrementBalance :: BankAccount -> Int -> IO (Maybe Int)
 incrementBalance acct delta = do
-  let b = accessAccout acct
-  newBal <- fmap (delta +) <$> takeMVar b
-  putMVar b newBal
+  let a = accessAccout acct
+  bal <- getBalance acct
+  let newBal = fmap (+ delta) bal
+  _ <- swapMVar a newBal
   return newBal

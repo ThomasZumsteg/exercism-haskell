@@ -36,21 +36,21 @@ main :: IO ()
 main = exitProperly $ runTestTT $ TestList
   [ withBank "initial balance is 0" $
     checkReturn (Just 0) . getBalance
-  --, withBank "incrementing and checking balance" $ \acct -> do
-  --  checkReturn (Just 0) $ getBalance acct
-  --  checkReturn (Just 10) $ incrementBalance acct 10
-    --checkReturn (Just 10) $ getBalance acct
-  --, withBank "incrementing balance from other processes then checking it\
-  --           \from test process" $ \acct -> do
-  --  replicateM 20 (incrementProc acct) >>= mapM_ (void . takeMVar)
-  --  checkReturn (Just 20) (getBalance acct)
-  --, testCase "closed banks hold no balance" $ do
-  --  acct <- openAccount
-  --  checkReturn (Just 0) (getBalance acct)
-  --  checkReturn (Just 10) $ incrementBalance acct 10
-  --  closeAccount acct
-  --  checkReturn Nothing (getBalance acct)
-  --  checkReturn Nothing $ incrementBalance acct 10
+  , withBank "incrementing and checking balance" $ \acct -> do
+    checkReturn (Just 0) $ getBalance acct
+    checkReturn (Just 10) $ incrementBalance acct 10
+    checkReturn (Just 10) $ getBalance acct
+  , withBank "incrementing balance from other processes then checking it\
+             \from test process" $ \acct -> do
+    replicateM 20 (incrementProc acct) >>= mapM_ (void . takeMVar)
+    checkReturn (Just 20) (getBalance acct)
+  , testCase "closed banks hold no balance" $ do
+    acct <- openAccount
+    checkReturn (Just 0) (getBalance acct)
+    checkReturn (Just 10) $ incrementBalance acct 10
+    closeAccount acct
+    checkReturn Nothing (getBalance acct)
+    checkReturn Nothing $ incrementBalance acct 10
   ]
 
 incrementProc :: BankAccount -> IO (MVar ())
