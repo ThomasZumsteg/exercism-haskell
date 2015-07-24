@@ -25,7 +25,7 @@ getBalance acct = do
 incrementBalance :: BankAccount -> Int -> IO (Maybe Int)
 incrementBalance acct delta = do
   let a = accessAccout acct
-  bal <- getBalance acct
-  let newBal = fmap (+ delta) bal
-  _ <- swapMVar a newBal
+  bal <- takeMVar a
+  let newBal = (+ delta) <$> bal
+  putMVar a newBal
   return newBal
