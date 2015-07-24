@@ -7,13 +7,13 @@ module CryptoSquare (
 
 import Data.Char (isAlphaNum, toLower)
 import Data.List.Split (chunksOf)
-import Data.List (transpose, intercalate)
+import Data.List (transpose)
 
 normalizePlaintext :: String -> String
 normalizePlaintext = map toLower . filter isAlphaNum
 
 squareSize :: String -> Int
-squareSize text = ceiling $ sqrt $ (fromIntegral chars :: Float)
+squareSize text = ceiling $ sqrt $ (fromIntegral chars :: Double)
   where chars = length $ normalizePlaintext text
 
 plaintextSegments :: String -> [String]
@@ -23,4 +23,4 @@ ciphertext :: String -> String
 ciphertext = concat . transpose . plaintextSegments
 
 normalizeCiphertext :: String -> String
-normalizeCiphertext = intercalate " " . transpose . plaintextSegments
+normalizeCiphertext = unwords . transpose . plaintextSegments
