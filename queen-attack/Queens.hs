@@ -17,12 +17,11 @@ insert c (Just (x, y)) = pack . modify c x y . unpack
     unpack = map (map head . words) . lines
 
 modify :: a -> Int -> Int -> [[a]] -> [[a]]
-modify c x y l =
+modify item x y list =
   let
-    row = head $ drop x l
-    new_row = (take y row) ++ [c] ++ (drop (y + 1) row)
-  in
-    (take x l) ++ [new_row] ++ (drop (x + 1) l)
+    (first, (row:rest)) = splitAt x list
+    (row_first, (_:row_last)) = splitAt y row
+  in first ++ [row_first ++ [item] ++ row_last] ++ rest
 
 canAttack :: Queen -> Queen -> Bool
 canAttack (black_x, black_y) (white_x, white_y) = diagonal || straight
