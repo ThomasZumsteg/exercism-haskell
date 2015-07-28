@@ -1,37 +1,28 @@
 module Queens (boardString, canAttack) where
 
-import Data.List (foldl')
-
 type Queen = (Int, Int)
 
-board :: [String]
-board = [ 
-  "_ _ _ _ _ _ _ _\n",
-  "_ _ _ _ _ _ _ _\n",
-  "_ _ _ _ _ _ _ _\n",
-  "_ _ _ _ _ _ _ _\n",
-  "_ _ _ _ _ _ _ _\n",
-  "_ _ _ _ _ _ _ _\n",
-  "_ _ _ _ _ _ _ _\n",
-  "_ _ _ _ _ _ _ _\n" 
-  ]
+board :: String
+board = unlines $ replicate 8 $ row
+  where row = unwords $ replicate 8 "_"
 
 boardString :: Maybe Queen -> Maybe Queen -> String
-boardString Nothing Nothing = concat board
-boardString Nothing (Just black) = concat $ insert 'B' black board
-boardString (Just white) Nothing = concat $ insert 'W' white board
-boardString (Just white) (Just black) = concat $ insert 'W' white $ insert 'B'black board
+boardString white black = insert 'B' black $ insert 'W' white $ board
 
-insert :: Char -> Queen -> [String] -> [String]
-insert q (x, y) b = foldl' mod_line [] b
+insert :: Char -> Maybe Queen -> String -> String
+insert _ Nothing = id
+insert c (Just (x, y)) = pack . modify c x y . unpack
   where
-    mod_line acc line
-      | length acc /= x = acc ++ [line] 
-      | otherwise = acc ++ [foldl' update_line "" line]
-      where
-        update_line acc' char
-          | length acc' /= 2 * y = acc' ++ [char]
-          | otherwise = acc' ++ [q]
+    pack = unlines . map (unwords . map (:[]))
+    unpack = map (map head . words) . lines
+
+modify :: a -> Int -> Int -> [[a]] -> [[a]]
+modify c x y l =
+  let
+    row = head $ drop x l
+    new_row = (take y row) ++ [c] ++ (drop (y + 1) row)
+  in
+    (take x l) ++ [new_row] ++ (drop (x + 1) l)
 
 canAttack :: Queen -> Queen -> Bool
 canAttack (black_x, black_y) (white_x, white_y) = diagonal || straight
