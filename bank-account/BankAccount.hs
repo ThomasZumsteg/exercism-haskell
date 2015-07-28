@@ -2,6 +2,7 @@ module BankAccount (BankAccount, openAccount,
   closeAccount, getBalance, incrementBalance) where
 
 import Control.Concurrent
+import Control.DeepSeq
 
 newtype BankAccount = BankAccount { accessAccout :: MVar (Maybe Int) }
 
@@ -27,5 +28,5 @@ incrementBalance acct delta = do
   let a = accessAccout acct
   bal <- takeMVar a
   let newBal = (+ delta) <$> bal
-  putMVar a newBal
+  putMVar a $!! newBal
   return newBal
