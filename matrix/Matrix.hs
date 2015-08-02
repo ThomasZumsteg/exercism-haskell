@@ -17,9 +17,15 @@ data Matrix a = Matrix {
   } deriving (Show, Eq)
 
 fromString :: Read a => String -> Matrix a
-fromString = fromList . map (map read . words) . lines
+fromString = fromList . map readLine . lines
+
+readLine :: Read a => String -> [a]
+readLine l = case reads l of
+  [] -> []
+  (e, es): _ -> e : readLine es
 
 fromList :: [[a]] -> Matrix a
+fromList [] = Matrix V.empty 0 0
 fromList m =
   let
     c = length $ head m
@@ -32,21 +38,20 @@ row :: Int -> Matrix a -> V.Vector a
 row r m = V.take (cols m) $ snd $ V.splitAt (r * (cols m)) $ cells m
 
 column :: Int -> Matrix a -> V.Vector a
-column c m = 
-  let xs = cells m
-  in case drop (c - 1)  of
-  (y:ys) -> y : column (cols m) ys
-  [] -> []
-
-
-columns :: Matrix a -> Int
-columns = undefined
+column c m = V.fromList $ takeNth (c + 1) $ V.toList $ cells m
+  where
+    takeNth n a = case drop (n - 1) a of
+      (y:ys) -> y : takeNth (cols m) ys
+      [] -> []
 
 shape :: Matrix a -> (Int, Int)
-shape m = (rows m, columns m)
+shape m = (rows m, cols m)
 
-transpose = undefined
+transpose :: Matrix a -> Matrix a
+transpose m = fromList $ [V.toList $ column (c - 1) m | c <- [1..(cols m)]]
 
-reshape = undefined
+reshape :: (Int, Int) -> Matrix a -> Matrix a
+reshape (r, c) (Matrix v _ _) = Matrix v r c
 
-flatten = undefined
+flatten :: Matrix a -> V.Vector a
+flatten = cells
