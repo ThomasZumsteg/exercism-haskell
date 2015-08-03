@@ -1,7 +1,7 @@
 module House ( rhyme ) where
 
 verse :: Int -> String
-verse v = concat $ first_line v : [refrain r | r <- reverse [0..(v-1)]]
+verse v = concat $ first_line v : map refrain [ v - 1, v - 2 .. 0 ]
 
 first_line :: Int -> String
 first_line l = case l of
@@ -36,4 +36,4 @@ refrain r = case r of
 
 
 rhyme :: String
-rhyme = unlines [verse n | n <- [0..11]] 
+rhyme = unlines $ map verse [0..11] 
