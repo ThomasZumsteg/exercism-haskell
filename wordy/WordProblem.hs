@@ -1,37 +1,47 @@
+{-# LANGUAGE FlexibleContexts #-}
 module WordProblem (answer) where
 
 import Text.Parsec
 import qualified Text.Parsec.Token as P
 import Text.Parsec.Language (haskellDef)
+import Data.Functor.Identity (Identity)
 
+type Operator = (Integer -> Integer -> Integer) 
 
 answer :: String -> Maybe Integer
 answer question = case parse makeTokens "" question of
-  Right (start : ops) = Just $ foldl (\acc (op, num) -> op acc num) start ops
+  (Right (start, ops)) -> Just $ foldl (\acc (op, num) -> op acc num) start ops
   Left _ -> Nothing
 
-lexer :: GenTokenParser String u Data.Functor.Identity.Identity
+lexer :: P.GenTokenParser String u Data.Functor.Identity.Identity
 lexer = P.makeTokenParser haskellDef
 
-makeTokens :: 
-makeTokens =
+makeTokens :: ParsecT
+  String
+  u
+  Data.Functor.Identity.Identity
+  (Integer, [(Operator, Integer)])
+makeTokens = 
   do
-    string "What is "
+    _ <- string "What is "
     start <- P.integer lexer
-    char ' '
-    opers <- many1 operations
-    char '?'
-    return (read start, opers)
+    opers <- many operations
+    _ <- char '?'
+    return (start, opers)
 
-operations ::
-operations =
+operations :: ParsecT
+  String
+  u
+  Data.Functor.Identity.Identity
+  (Operator, Integer)
+operations = 
   do
     op <- operator
-    char ' '
+    _ <- char ' '
     num <- P.integer lexer
     return (op, num)
 
-operator :: (Integral a, Stream s m Char) => ParsecT s u m (a -> a -> a)
+operator :: (Integral a, Stream s m Char) => ParsecT s u m Operator
 operator =
       try (string "plus" >> return (+))
   <|> try (string "minus" >> return (-))
