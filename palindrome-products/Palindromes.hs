@@ -3,25 +3,28 @@ module Palindromes (
   smallestPalindrome
 ) where
 
-import Data.List (find)
-
 largestPalindrome :: (Show a, Integral a) => a -> a -> (a, [(a, a)])
 largestPalindrome minFact maxFact =
   let
-    factors =
-      [ [ (x, y) | y <- [maxFact, maxFact - 1 .. x] ] |
-      x <- [maxFact, maxFact - 1 .. minFact] ]
+    factors = [ x * y |
+        x <- [minFact .. maxFact],
+        y <- [x .. maxFact] ]
+    biggest = maximum $ filter isPal factors
   in
-    findPal factors
+    (biggest, findFactors biggest minFact maxFact)
 
 smallestPalindrome :: (Show a, Integral a) => a -> a -> (a, [(a, a)])
 smallestPalindrome minFact maxFact =
   let 
-    factors = 
-      [ [ (x, y) | y <- [minFact .. x] ]
-      x <- [minFact .. maxFact] ]
+    factors = [ x * y | 
+      x <- [minFact .. maxFact],
+      y <- [x .. maxFact] ]
+    smallest = minimum $ filter isPal factors
   in
-    findPal factors
+    (smallest, findFactors smallest minFact maxFact)
+
+isPal :: (Show a) => a -> Bool
+isPal n = (show n) == (reverse $ show n)
 
 findFactors :: (Integral a) => a -> a -> a -> [(a, a)]
 findFactors num minFact maxFact = 
@@ -29,10 +32,3 @@ findFactors num minFact maxFact =
     stop = min maxFact (floor $ (sqrt :: Double -> Double) $ fromIntegral num)
     smallestFact =  [y | y <- [ minFact .. stop ], 0 == mod num y]
   in [ (x, div num x) | x <- smallestFact, maxFact >= div num x]
-
-findPal :: (Integral a, Show a) => [[(a, a)]] -> a
-findFirstPal nums = case find isPal nums of
-  Just n -> n
-  Nothing -> 0
-  where
-    isPal num = (show num) == (reverse $ show num)
