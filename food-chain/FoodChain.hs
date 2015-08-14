@@ -1,11 +1,11 @@
 module FoodChain (song) where
 
 song :: String
-song = concat $ map (\v -> verse v ++ "\n") [0..7]
+song = unlines $ map verse [0..7]
 
 verse :: Integer -> String
 verse 7 = "I know an old lady who swallowed a horse.\nShe's dead, of course!\n"
-verse n = concat $ [first n ++ "\n"] ++ map (\r -> refrain r ++ "\n") [n, (n-1).. 0] 
+verse n = unlines $ first n : map refrain [n, (n-1).. 0] 
 
 first :: Integer -> String
 first n = "I know an old lady who swallowed a " ++
