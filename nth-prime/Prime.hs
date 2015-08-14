@@ -1,10 +1,10 @@
 module Prime (nth, minus) where
 
 nth :: Int -> Int
-nth n = primes !! (n-1)
+nth = (primes !!) . pred
 
 primes :: [Int]
-primes = sieve [2..]
+primes = 2 : sieve [3,5..]
   where
     sieve (p:xs) = p : sieve (minus xs [p*p, p*(p+1)..])
 
