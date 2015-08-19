@@ -16,4 +16,4 @@ verse n =
   show (n - 1) ++ " bottles of beer on the wall.\n"
 
 sing :: Int -> Int -> String
-sing start stop = unlines $ map (\v -> verse v) ([start, start-1 .. stop])
+sing start stop = unlines $ map verse [start, start-1 .. stop]
