@@ -5,9 +5,5 @@ primesUpTo n = takeWhile (<=n) primes
 
 primes :: [Integer]
 primes = 2 : filter isPrime [3, 5..]
-
-isPrime :: Integer -> Bool
-isPrime n = not $ any (\x -> mod n x == 0) divisors
   where
-    s = floor $ (sqrt :: Double -> Double) $ fromIntegral n
-    divisors = takeWhile (<= s) primes
+    isPrime p = all ((/=) 0 . mod p) $ takeWhile (\n -> n * n <= p) primes
