@@ -96,13 +96,13 @@ test_spiralNone =
 resultForTests :: [Test]
 resultForTests =
   [ testCase "empty board has no winner" test_emptyBoard
---  , testCase "1x1 board with black stone" test_oneByOneBlack
---  , testCase "1x1 board with white stone" test_oneByOneWhite
---  , testCase "convulted path" test_convultedPath
---  , testCase "rectangle, black wins" test_rectangleBlack
---  , testCase "rectangle, white wins" test_rectangleWhite
---  , testCase "spiral, black wins" test_spiralBlack
---  , testCase "spiral, nobody wins" test_spiralNone
+  , testCase "1x1 board with black stone" test_oneByOneBlack
+  , testCase "1x1 board with white stone" test_oneByOneWhite
+  , testCase "convulted path" test_convultedPath
+  , testCase "rectangle, black wins" test_rectangleBlack
+  , testCase "rectangle, white wins" test_rectangleWhite
+  , testCase "spiral, black wins" test_spiralBlack
+  , testCase "spiral, nobody wins" test_spiralNone
   ]
 
 main :: IO ()
