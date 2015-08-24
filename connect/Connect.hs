@@ -1,31 +1,45 @@
-module Connect (resultFor, Color(Black, White), getNeighbors, makeBoard) where
+module Connect (resultFor, Color(Black, White), crosses, makeGraph, makeBoard, getNeighbors) where
 
 import qualified Data.Vector as V
-import Control.Monad ((>>=))
+import Data.Maybe (fromJust)
 
 data Color = Black | White deriving (Eq, Show)
 
 type Pos = (Int, Int)
 type Board = V.Vector (V.Vector Char)
+type Graph = [(Pos, [Pos])]
 
 resultFor :: [String] -> Maybe Color
-resultFor _  = Nothing
+resultFor _ = Nothing
+
+crosses :: Board -> Pos -> Bool
+crosses _ _ = undefined
+--crosses  pos@(x, y)
+--  | y == lastLine = True
+--  | [] == neighbors = False
+--  | otherwise = any () 
+--  where
+--    lastLine = V.length board - 1
+
+makeGraph :: [String] -> Char -> [(Pos, [Pos])]
+makeGraph b c = filter (not . null . snd) $
+  [((x,y), getNeighbors (makeBoard b) (x,y)) | 
+  x <- [0 .. (length $ head b) - 1], y <- [0 .. (length b) - 1], 
+  b !! y !! x == c]
 
 makeBoard :: [String] -> Board
 makeBoard = V.fromList . map V.fromList
 
-crosses :: Char -> Board -> Pos -> Bool
-crosses c board pos@(x, y)
-  | y + 1 >= V.length board = True
-  | [] == neighbors = False
-  | otherwise = any (crosses c $ mod2d x y '#') neighbors
+getNeighbors :: Board -> Pos -> [Pos]
+getNeighbors board (x, y) = [(x + x', y + y') 
+  | (x', y') <- [(0, -1), (1, -1), (-1, 0), (1, 0), (-1, 1), (0, 1)]
+  , Just c == vElem board ((x + x'), (y + y'))]
   where
-    neighbors = getNeighbors c board pos
-    mod2d n m v = board V.// [(m, board V.! m V.// [(n, v)])]
+    c = fromJust $ vElem board (x, y)
 
-getNeighbors :: Char -> Board -> Pos -> [Pos]
-getNeighbors c board (x, y) = [(x', y') 
-  | x' <- [x-1..x+1], y' <- [y-1..y+1], 
-  (x', y') /= (x, y), Just c == vElem x' y']
-  where
-    vElem n m = board V.!? n >>= (V.!? m)
+vElem :: Board -> Pos -> Maybe Char
+vElem b (x, y) = b V.!? y >>= (V.!? x)
+
+mod2d :: Board -> Pos -> Char -> Board
+mod2d b (x,y) v = b V.// [(y, b V.! y V.// [(x, v)])]
+
