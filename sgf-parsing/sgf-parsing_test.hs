@@ -77,13 +77,13 @@ sgfParsingTests =
     Nothing
   , tps "(;A[B];B[C])" $ 
     Just $ ts [("A", ["B"])] (tn [("B", ["C"])])
-  --, tps "(;A[B](;B[C])(;C[D]))" $ 
-  --  Just $ t [("A", ["B"])]
-  --      [ tn [("B", ["C"])]
-  --      , tn [("C", ["D"])]
-  --      ]
-  --, tps "(;A[b][c][d])" $
-  --  Just $ tn [("A", ["b", "c", "d"])]
-  --, tps "(;A[\\]b\nc\\\nd\t\te\\\\ \\\n\\]])" $
-  --  Just $ tn [("A", ["]b cd  e\\ ]"])]
+  , tps "(;A[B](;B[C])(;C[D]))" $ 
+    Just $ t [("A", ["B"])]
+        [ tn [("B", ["C"])]
+        , tn [("C", ["D"])]
+        ]
+  , tps "(;A[b][c][d])" $
+    Just $ tn [("A", ["b", "c", "d"])]
+  , tps "(;A[\\]b\nc\\\nd\t\te\\\\ \\\n\\]])" $
+    Just $ tn [("A", ["]b cd  e\\ ]"])]
   ]
