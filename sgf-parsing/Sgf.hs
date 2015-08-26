@@ -1,7 +1,6 @@
 module Sgf (parseSgf) where
 
 import qualified Data.Map as Map
-import Control.Applicative hiding ((<|>), many)
 import Data.Text (Text, pack)
 import Data.Tree
 import Text.Parsec
@@ -18,7 +17,7 @@ tree :: Parsec Text () (Tree SgfNode)
 tree = do
   n <- char '(' *> many1 node 
   trees <- many tree <* char ')'
-  return $ makeSfgTree n trees
+  return $ makeTree n trees
 
 node :: Parsec Text () SgfNode
 node = char ';' *> (Map.fromList <$> many properties)
@@ -31,17 +30,18 @@ properties = do
 
 val :: Parsec Text () Text
 val = char '[' *> worker [] False
-  where
-    worker acc bs = do
-        c <- anyChar
-        case c of
-            ']'  | not bs    -> return . pack . reverse $ acc
-            '\\' | not bs    -> worker acc True
-            '\n' | bs        -> worker acc False
-            _    | isSpace c -> worker (' ' : acc) False
-            _                -> worker (c : acc) False
+  
+worker :: String -> Bool -> Parsec Text () Text
+worker acc bs = do
+    c <- anyChar
+    case c of
+        ']'  | not bs    -> return . pack . reverse $ acc
+        '\\' | not bs    -> worker acc True
+        '\n' | bs        -> worker acc False
+        _    | isSpace c -> worker (' ' : acc) False
+        _                -> worker (c : acc) False
 
-makeSfgTree :: [SgfNode] -> [(Tree SgfNode)] -> Tree SgfNode
-makeSfgTree [] _ = error "Needs a root node"
-makeSfgTree [n] trees = Node n trees
-makeSfgTree (n:ns) trees = Node n [makeSfgTree ns trees] 
+makeTree :: [SgfNode] -> [(Tree SgfNode)] -> Tree SgfNode
+makeTree [] _ = error "Needs a root node"
+makeTree [n] trees = Node n trees
+makeTree (n:ns) trees = Node n [makeTree ns trees] 
