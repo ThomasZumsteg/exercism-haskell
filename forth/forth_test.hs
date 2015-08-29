@@ -54,23 +54,23 @@ forthTests =
     Right "1 2 3 2" @=? runTexts ["1 2 3 over"]
     Left StackUnderflow @=? runTexts ["1 over"]
     Left StackUnderflow @=? runTexts ["over"]
-  --, testCase "defining a new word" $ do
-  --  Right "1 1 1" @=? runTexts [ ": dup-twice dup dup ;"
-  --                             , "1 dup-twice"
-  --                             ]
-  --, testCase "redefining an existing word" $ do
-  --  Right "1 1 1" @=? runTexts [ ": foo dup ;"
-  --                             , ": foo dup dup ;"
-  --                             , "1 foo"
-  --                             ]
-  --, testCase "redefining an existing built-in word" $ do
-  --  Right "1 1" @=? runTexts [ ": swap dup ;"
-  --                           , "1 swap"
-  --                           ]
-  --, testCase "defining words with odd characters" $ do
-  --  Right "220371" @=? runTexts [": € 220371 ; €"]
-  --, testCase "defining a number" $ do
-  --  Left InvalidWord @=? runTexts [": 1 2 ;"]
+  , testCase "defining a new word" $ do
+    Right "1 1 1" @=? runTexts [ ": dup-twice dup dup ;"
+                               , "1 dup-twice"
+                               ]
+  , testCase "redefining an existing word" $ do
+    Right "1 1 1" @=? runTexts [ ": foo dup ;"
+                               , ": foo dup dup ;"
+                               , "1 foo"
+                               ]
+  , testCase "redefining an existing built-in word" $ do
+    Right "1 1" @=? runTexts [ ": swap dup ;"
+                             , "1 swap"
+                             ]
+  , testCase "defining words with odd characters" $ do
+    Right "220371" @=? runTexts [": € 220371 ; €"]
+  , testCase "defining a number" $ do
+    Left InvalidWord @=? runTexts [": 1 2 ;"]
   , testCase "calling a non-existing word" $ do
     Left (UnknownWord "foo") @=? runTexts ["1 foo"]
   ]
