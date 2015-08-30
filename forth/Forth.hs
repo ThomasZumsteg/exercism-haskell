@@ -100,7 +100,7 @@ minus fs@(ForthState { getStack = stack })
     stack' = (b - a):cs
 
 divide :: Operation
-divide fs@(ForthState { getStack = stack }) 
+divide fs@(ForthState { getStack = stack })
   | length stack < 2 = Left StackUnderflow
   | a == 0 = Left DivisionByZero
   | otherwise = Right $ fs { getStack = stack' }
@@ -160,4 +160,4 @@ addToWords text fs@(ForthState { getDefs = knownWords } )
 makeOpFromList :: [T.Text] -> Map.Map T.Text Operation -> Maybe Operation
 makeOpFromList textOps definitions =
   let ops = map (\op -> Map.lookup op definitions) textOps
-  in foldl' (>>) (Just (Right . id)) [Just dup, Just dup]
+  in foldl' (>>=) (Just (Right . id)) ops
