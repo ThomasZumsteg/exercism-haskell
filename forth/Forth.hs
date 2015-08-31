@@ -14,6 +14,7 @@ import Data.Maybe (isJust, fromJust)
 import Data.Either (isRight)
 import Data.Char
 import Data.List (foldl')
+import Control.Applicative hiding (empty)
 
 type Value = Int
 
@@ -151,7 +152,7 @@ getWords text
 addToWords :: T.Text -> ForthState -> (T.Text, Either ForthError ForthState)
 addToWords text fs@(ForthState { getDefs = knownWords } )
   | ';' /= T.head remainer = (text, Left InvalidWord)
-  | isJust newOp = (T.tail remainer, Right $ fs { getDefs = Map.insert (T.pack "dup-twice") (fromJust newOp) knownWords })
+  | isJust newOp = (T.tail remainer, Right $ fs { getDefs = Map.insert newWord (fromJust newOp) knownWords })
   where
     (definition, remainer) = T.breakOn (T.pack ";") text
     (newWord: ops) = getWords remainer
@@ -160,4 +161,8 @@ addToWords text fs@(ForthState { getDefs = knownWords } )
 makeOpFromList :: [T.Text] -> Map.Map T.Text Operation -> Maybe Operation
 makeOpFromList textOps definitions =
   let ops = map (\op -> Map.lookup op definitions) textOps
-  in foldl' (>>=) (Just (Right . id)) ops
+  in foldl' joinOps (Just  $ Right) ops
+
+joinOps :: Maybe Operation -> Maybe Operation -> Maybe Operation
+joinOps f g = join <$> g <*> f
+  where join f' g' = ((=<<) f') . g'
